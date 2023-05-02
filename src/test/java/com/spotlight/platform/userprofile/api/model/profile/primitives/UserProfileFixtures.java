@@ -16,5 +16,26 @@ public class UserProfileFixtures {
     public static final UserProfile USER_PROFILE = new UserProfile(USER_ID, LAST_UPDATE_TIMESTAMP,
             Map.of(UserProfilePropertyName.valueOf("property1"), UserProfilePropertyValue.valueOf("property1Value")));
 
+    public static final UserProfile USER_PROFILE_COLLECT = new UserProfile(USER_ID, LAST_UPDATE_TIMESTAMP,
+            Map.of(
+                    UserProfilePropertyName.valueOf("inventory"), UserProfilePropertyValue.valueOf("[\"sword1\", \"sword2\", \"shield1\"]"),
+                    UserProfilePropertyName.valueOf("tools"), UserProfilePropertyValue.valueOf("[\"tool1\", \"tool2\"]")));
+
+    public static final UserProfile USER_PROFILE_INCREMENT = new UserProfile(USER_ID, LAST_UPDATE_TIMESTAMP,
+            Map.of(
+                    UserProfilePropertyName.valueOf("battleFought"), UserProfilePropertyValue.valueOf("10"),
+                    UserProfilePropertyName.valueOf("questsNotCompleted"), UserProfilePropertyValue.valueOf("-1")));
+
+    public static final UserProfile USER_PROFILE_INCREMENT_INVALID = new UserProfile(USER_ID, LAST_UPDATE_TIMESTAMP,
+            Map.of(UserProfilePropertyName.valueOf("property"), UserProfilePropertyValue.valueOf("A")));
+
+    public static final UserProfile USER_PROFILE_REPLACE = new UserProfile(USER_ID, LAST_UPDATE_TIMESTAMP,
+            Map.of(
+                    UserProfilePropertyName.valueOf("currentGold"), UserProfilePropertyValue.valueOf("500"),
+                    UserProfilePropertyName.valueOf("currentGems"), UserProfilePropertyValue.valueOf("800")));
+
     public static final String SERIALIZED_USER_PROFILE = FixtureHelpers.fixture("/fixtures/model/profile/userProfile.json");
+    public static final String SERIALIZED_USER_PROFILE_COLLECT = FixtureHelpers.fixture("/fixtures/model/profile/userProfileCollect.json");
+    public static final String SERIALIZED_USER_PROFILE_INCREMENT = FixtureHelpers.fixture("/fixtures/model/profile/userProfileIncrement.json");
+    public static final String SERIALIZED_USER_PROFILE_REPLACE = FixtureHelpers.fixture("/fixtures/model/profile/userProfileReplace.json");
 }
