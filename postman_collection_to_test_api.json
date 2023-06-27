@@ -1,0 +1,125 @@
+{
+	"info": {
+		"_postman_id": "1fc08f5e-1d6e-4b60-875a-c2261c865d6d",
+		"name": "PhoenixGames",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "2730226"
+	},
+	"item": [
+		{
+			"name": "Get User Profile",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{host}}/users/de4310e5-b139-441a-99db-77c9c4a5fada/profile",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"users",
+						"de4310e5-b139-441a-99db-77c9c4a5fada",
+						"profile"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update User Profile - replace",
+			"request": {
+				"method": "PATCH",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"userId\": \"de4310e5-b139-441a-99db-77c9c4a5fada\",\r\n  \"type\": \"replace\",\r\n  \"properties\": {\r\n    \"currentGold\": 500,\r\n    \"currentGems\": 800\r\n  }\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/users/de4310e5-b139-441a-99db-77c9c4a5fada/events",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"users",
+						"de4310e5-b139-441a-99db-77c9c4a5fada",
+						"events"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update User Profile - increment",
+			"request": {
+				"method": "PATCH",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"userId\": \"de4310e5-b139-441a-99db-77c9c4a5fada\",\r\n  \"type\": \"increment\",\r\n  \"properties\": {\r\n    \"battleFought\": 10,\r\n    \"questsNotCompleted\": -1\r\n  }\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/users/de4310e5-b139-441a-99db-77c9c4a5fada/events",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"users",
+						"de4310e5-b139-441a-99db-77c9c4a5fada",
+						"events"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update User Profile - collect",
+			"request": {
+				"method": "PATCH",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"userId\": \"de4310e5-b139-441a-99db-77c9c4a5fada\",\r\n  \"type\": \"collect\",\r\n  \"properties\": {\r\n    \"inventory\": [\"sword1\", \"sword2\", \"shield1\"],\r\n    \"tools\": [\"tool1\", \"tool2\"]\r\n  }\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/users/de4310e5-b139-441a-99db-77c9c4a5fada/events",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"users",
+						"de4310e5-b139-441a-99db-77c9c4a5fada",
+						"events"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"variable": [
+		{
+			"key": "host",
+			"value": "http://localhost:8080"
+		}
+	]
+}

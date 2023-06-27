@@ -14,10 +14,10 @@ class UserProfileCommandTest {
         UserProfile userProfile = UserProfileFixtures.USER_PROFILE_COLLECT;
 
         UserProfileCommand userProfileCommand = new UserProfileCommand(userProfile.userId(),
-                Command.COLLECT.getType(), userProfile.userProfileProperties());
+                Command.COLLECT.name(), userProfile.userProfileProperties());
 
         assertEquals(userProfile.userId(), userProfileCommand.userId());
-        assertEquals(Command.COLLECT.getType(), userProfileCommand.type());
+        assertEquals(Command.COLLECT.name(), userProfileCommand.type());
         assertEquals(userProfile.userProfileProperties(), userProfileCommand.properties());
     }
 }

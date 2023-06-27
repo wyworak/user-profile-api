@@ -117,20 +117,58 @@ class UserResourceIntegrationTest {
             UserProfile userProfile = UserProfileFixtures.USER_PROFILE_COLLECT;
 
             UserProfileCommand userProfileCommand = new UserProfileCommand(userProfile.userId(),
-                    Command.COLLECT.getType(), userProfile.userProfileProperties());
+                    Command.COLLECT.name(), userProfile.userProfileProperties());
 
             String jsonBody = JsonMapper.getInstance().writeValueAsString(userProfileCommand);
 
-            Response response = client.targetRest()
+            UserProfile updatedUserProfile;
+            try (Response response = client.targetRest()
                     .path(URL)
                     .resolveTemplate(USER_ID_PATH_PARAM, UserProfileFixtures.USER_ID)
                     .request()
-                    .method("PATCH", Entity.json(jsonBody));
+                    .method("PATCH", Entity.json(jsonBody))) {
 
-            UserProfile updatedUserProfile = response.readEntity(UserProfile.class);
+                updatedUserProfile = response.readEntity(UserProfile.class);
 
-            assertThat(response.getStatus()).isEqualTo(HttpStatus.OK_200);
+                assertThat(response.getStatus()).isEqualTo(HttpStatus.OK_200);
+            }
             assertThatJson(updatedUserProfile).isEqualTo(UserProfileFixtures.USER_PROFILE_COLLECT);
+        }
+
+        @Test
+        void differentUserIDs_returns404(ClientSupport client) throws JsonProcessingException {
+            UserProfile userProfile = UserProfileFixtures.USER_PROFILE_COLLECT;
+            UserProfileCommand userProfileCommand = new UserProfileCommand(userProfile.userId(),
+                    Command.COLLECT.name(), userProfile.userProfileProperties());
+
+            String jsonBody = JsonMapper.getInstance().writeValueAsString(userProfileCommand);
+
+            try (Response response = client.targetRest()
+                    .path(URL)
+                    .resolveTemplate(USER_ID_PATH_PARAM, UserProfileFixtures.INVALID_USER_ID)
+                    .request()
+                    .method("PATCH", Entity.json(jsonBody))) {
+                assertThat(response.getStatus()).isEqualTo(HttpStatus.BAD_REQUEST_400);
+            }
+        }
+
+        @Test
+        void InvalidUpdateCommand_returns500(ClientSupport client) throws JsonProcessingException {
+            UserProfile userProfile = UserProfileFixtures.USER_PROFILE_COLLECT;
+            UserProfileCommand userProfileCommand = new UserProfileCommand(userProfile.userId(),
+                    null, userProfile.userProfileProperties());
+            String jsonBody = JsonMapper.getInstance().writeValueAsString(userProfileCommand);
+
+            try (Response response = client.targetRest()
+                    .path(URL)
+                    .resolveTemplate(USER_ID_PATH_PARAM, UserProfileFixtures.USER_ID)
+                    .request()
+                    .method("PATCH", Entity.json(jsonBody))) {
+
+                System.out.println(response);
+
+                assertThat(response.getStatus()).isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR_500);
+            }
         }
     }
 }

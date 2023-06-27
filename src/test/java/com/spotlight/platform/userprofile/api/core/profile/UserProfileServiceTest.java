@@ -3,7 +3,6 @@ package com.spotlight.platform.userprofile.api.core.profile;
 import com.spotlight.platform.userprofile.api.core.exceptions.EntityNotFoundException;
 import com.spotlight.platform.userprofile.api.core.exceptions.InvalidPropertyException;
 import com.spotlight.platform.userprofile.api.core.exceptions.InvalidUpdateCommandException;
-import com.spotlight.platform.userprofile.api.core.exceptions.InvalidUserIdException;
 import com.spotlight.platform.userprofile.api.core.profile.persistence.UserProfileDao;
 import com.spotlight.platform.userprofile.api.model.profile.UserProfile;
 import com.spotlight.platform.userprofile.api.model.profile.primitives.UserId;
@@ -60,9 +59,8 @@ class UserProfileServiceTest {
 
             assertThat(
                     userProfileService.update(UserProfileFixtures.USER_ID,
-                            userProfile.userId(),
                             userProfile.userProfileProperties(),
-                            Command.COLLECT.getType()))
+                            Command.COLLECT.name()))
                     .usingRecursiveComparison()
                     .isEqualTo(UserProfileFixtures.USER_PROFILE);
         }
@@ -76,9 +74,8 @@ class UserProfileServiceTest {
 
             assertThat(
                     userProfileService.update(UserProfileFixtures.USER_ID,
-                            userProfile.userId(),
                             userProfile.userProfileProperties(),
-                            Command.COLLECT.getType()))
+                            Command.COLLECT.name()))
                     .usingRecursiveComparison()
                     .isEqualTo(UserProfileFixtures.USER_PROFILE);
         }
@@ -92,9 +89,8 @@ class UserProfileServiceTest {
 
             assertThat(
                     userProfileService.update(UserProfileFixtures.USER_ID,
-                            userProfile.userId(),
                             userProfile.userProfileProperties(),
-                            Command.COLLECT.getType()))
+                            Command.COLLECT.name()))
                     .usingRecursiveComparison()
                     .isEqualTo(UserProfileFixtures.USER_PROFILE_COLLECT);
         }
@@ -108,9 +104,8 @@ class UserProfileServiceTest {
 
             assertThat(
                     userProfileService.update(UserProfileFixtures.USER_ID,
-                            userProfile.userId(),
                             userProfile.userProfileProperties(),
-                            Command.REPLACE.getType()))
+                            Command.REPLACE.name()))
                     .usingRecursiveComparison()
                     .isEqualTo(UserProfileFixtures.USER_PROFILE);
         }
@@ -124,9 +119,8 @@ class UserProfileServiceTest {
 
             assertThat(
                     userProfileService.update(UserProfileFixtures.USER_ID,
-                            userProfile.userId(),
                             userProfile.userProfileProperties(),
-                            Command.INCREMENT.getType()))
+                            Command.INCREMENT.name()))
                     .usingRecursiveComparison()
                     .isEqualTo(UserProfileFixtures.USER_PROFILE);
         }
@@ -140,9 +134,8 @@ class UserProfileServiceTest {
 
             assertThat(
                     userProfileService.update(UserProfileFixtures.USER_ID,
-                            userProfile.userId(),
                             userProfile.userProfileProperties(),
-                            Command.INCREMENT.getType()))
+                            Command.INCREMENT.name()))
                     .usingRecursiveComparison()
                     .isEqualTo(UserProfileFixtures.USER_PROFILE_INCREMENT);
         }
@@ -156,26 +149,24 @@ class UserProfileServiceTest {
 
             assertThatThrownBy(
                     () -> userProfileService.update(UserProfileFixtures.USER_ID,
-                            userProfile.userId(),
                             userProfile.userProfileProperties(),
-                            Command.INCREMENT.getType()))
+                            Command.INCREMENT.name()))
                     .isExactlyInstanceOf(InvalidPropertyException.class);
         }
 
-        @Test
-        void updateForInvalidUserId_throwsException() {
-            when(userProfileDaoMock.get(any(UserId.class))).thenReturn(Optional.of(UserProfileFixtures.USER_PROFILE));
-            doNothing().when(userProfileDaoMock).put(any(UserProfile.class));
-
-            UserProfile userProfile = UserProfileFixtures.USER_PROFILE;
-
-            assertThatThrownBy(
-                    () -> userProfileService.update(UserId.valueOf("InvalidUserId"),
-                            userProfile.userId(),
-                            userProfile.userProfileProperties(),
-                            Command.INCREMENT.getType()))
-                    .isExactlyInstanceOf(InvalidUserIdException.class);
-        }
+//        @Test
+//        void updateForInvalidUserId_throwsException() {
+//            when(userProfileDaoMock.get(any(UserId.class))).thenReturn(Optional.of(UserProfileFixtures.USER_PROFILE));
+//            doNothing().when(userProfileDaoMock).put(any(UserProfile.class));
+//
+//            UserProfile userProfile = UserProfileFixtures.USER_PROFILE;
+//
+//            assertThatThrownBy(
+//                    () -> userProfileService.update(UserId.valueOf("InvalidUserId"),
+//                            userProfile.userProfileProperties(),
+//                            Command.INCREMENT.name()))
+//                    .isExactlyInstanceOf(InvalidUserIdException.class);
+//        }
 
         @Test
         void updateForInvalidUpdateCommand_throwsException() {
@@ -186,7 +177,6 @@ class UserProfileServiceTest {
 
             assertThatThrownBy(
                     () -> userProfileService.update(UserProfileFixtures.USER_ID,
-                            userProfile.userId(),
                             userProfile.userProfileProperties(),
                             "InvalidType"))
                     .isExactlyInstanceOf(InvalidUpdateCommandException.class);

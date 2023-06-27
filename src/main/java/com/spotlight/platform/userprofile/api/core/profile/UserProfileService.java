@@ -3,7 +3,6 @@ package com.spotlight.platform.userprofile.api.core.profile;
 import com.spotlight.platform.userprofile.api.core.exceptions.EntityNotFoundException;
 import com.spotlight.platform.userprofile.api.core.exceptions.InvalidPropertyException;
 import com.spotlight.platform.userprofile.api.core.exceptions.InvalidUpdateCommandException;
-import com.spotlight.platform.userprofile.api.core.exceptions.InvalidUserIdException;
 import com.spotlight.platform.userprofile.api.core.profile.persistence.UserProfileDao;
 import com.spotlight.platform.userprofile.api.model.profile.UserProfile;
 import com.spotlight.platform.userprofile.api.model.profile.primitives.UserId;
@@ -12,7 +11,6 @@ import com.spotlight.platform.userprofile.api.model.profile.primitives.UserProfi
 import com.spotlight.platform.userprofile.api.web.data.enums.Command;
 
 import javax.inject.Inject;
-import java.time.Clock;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -37,11 +35,8 @@ public class UserProfileService {
     }
 
     public UserProfile update(UserId userId,
-                              UserId commandUserId,
-                              Map<UserProfilePropertyName,
-                                      UserProfilePropertyValue> properties,
+                              Map<UserProfilePropertyName, UserProfilePropertyValue> properties,
                               String type) {
-        validateUserId(userId, commandUserId);
         Command command = getUpdateCommand(type);
         Optional<UserProfile> profile = userProfileDao.get(userId);
 
@@ -58,31 +53,23 @@ public class UserProfileService {
         return get(userId);
     }
 
-    private void validateUserId(UserId userId, UserId commandUserId) {
-        if (!userId.equals(commandUserId)) {
-            throw new InvalidUserIdException();
-        }
-    }
-
     private Command getUpdateCommand(String type) {
         try {
-            return Command.fromType(type);
+            return Command.valueOf(type.toUpperCase());
         } catch (IllegalArgumentException e) {
             throw new InvalidUpdateCommandException(e);
         }
     }
 
     private void persistUserProfile(UserId userId, Map<UserProfilePropertyName, UserProfilePropertyValue> properties) {
-        UserProfile userProfile = new UserProfile(userId, Instant.now(Clock.systemUTC()), properties);
+        UserProfile userProfile = new UserProfile(userId, Instant.now(), properties);
         userProfileDao.put(userProfile);
     }
 
     private void addValueToList(UserId userId, Map<UserProfilePropertyName, UserProfilePropertyValue> properties) {
         Map<UserProfilePropertyName, UserProfilePropertyValue> currentProperties = loadProperties(userId);
 
-        for (UserProfilePropertyName propertyName : properties.keySet()) {
-            UserProfilePropertyValue propertyValue = properties.get(propertyName);
-
+        properties.forEach((propertyName, propertyValue) -> {
             if (currentProperties.containsKey(propertyName)) {
                 UserProfilePropertyValue currentPropertyValue = currentProperties.get(propertyName);
 
@@ -94,41 +81,39 @@ public class UserProfileService {
             } else {
                 currentProperties.put(propertyName, UserProfilePropertyValue.valueOf(propertyValue.getValue()));
             }
-        }
+        });
+
         persistUserProfile(userId, currentProperties);
     }
 
     private void incrementValue(UserId userId, Map<UserProfilePropertyName, UserProfilePropertyValue> properties) {
         Map<UserProfilePropertyName, UserProfilePropertyValue> currentProperties = loadProperties(userId);
 
-        for (UserProfilePropertyName propertyName : properties.keySet()) {
+        properties.forEach((propertyName, propertyValue) -> {
             try {
-                int propertyValue = Integer.parseInt(String.valueOf(properties.get(propertyName).getValue()));
+                int value = Integer.parseInt(String.valueOf(propertyValue.getValue()));
 
                 if (currentProperties.containsKey(propertyName)) {
-                    String value = String.valueOf(currentProperties.get(propertyName).getValue());
-
-                    int currentPropertyValue = Integer.parseInt(value);
-
-                    currentPropertyValue += propertyValue;
-
+                    String currentValue = String.valueOf(currentProperties.get(propertyName).getValue());
+                    int currentPropertyValue = Integer.parseInt(currentValue);
+                    currentPropertyValue += value;
                     currentProperties.put(propertyName, UserProfilePropertyValue.valueOf(currentPropertyValue));
                 } else {
-                    currentProperties.put(propertyName, UserProfilePropertyValue.valueOf(propertyValue));
+                    currentProperties.put(propertyName, UserProfilePropertyValue.valueOf(value));
                 }
             } catch (Exception e) {
                 throw new InvalidPropertyException(e);
             }
-        }
+        });
+
         persistUserProfile(userId, currentProperties);
     }
 
     private void replaceValue(UserId userId, Map<UserProfilePropertyName, UserProfilePropertyValue> properties) {
         Map<UserProfilePropertyName, UserProfilePropertyValue> currentProperties = loadProperties(userId);
 
-        for (UserProfilePropertyName newPropertyName : properties.keySet()) {
-            currentProperties.put(newPropertyName, UserProfilePropertyValue.valueOf(properties.get(newPropertyName)));
-        }
+        properties.forEach((propertyName, propertyValue)
+                -> currentProperties.put(propertyName, UserProfilePropertyValue.valueOf(propertyValue.getValue())));
 
         persistUserProfile(userId, currentProperties);
     }

@@ -19,7 +19,7 @@ public class AlphaNumericalStringWithMaxLength extends WrappedString {
     @Length(min = MIN_LENGTH, max = MAX_LENGTH)
     @Pattern(regexp = PATTERN_ALPHA_NUMERIC_ONLY)
     @JsonProperty
-    protected String getValue() {
+    public String getValue() {
         return super.getValue();
     }
 }

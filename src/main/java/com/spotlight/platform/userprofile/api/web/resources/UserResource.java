@@ -39,12 +39,19 @@ public class UserResource {
 
     @Path("events")
     @PATCH
-    public Response updateUserProfile(@Valid @PathParam("userId") UserId userId, UserProfileCommand userProfileCommand) {
-        UserId commandUserId = userProfileCommand.userId();
+    public Response updateUserProfile(@Valid @PathParam("userId") UserId userId, @Valid UserProfileCommand userProfileCommand) {
         String commandType = userProfileCommand.type();
         Map<UserProfilePropertyName, UserProfilePropertyValue> properties = userProfileCommand.properties();
 
-        UserProfile userProfileUpdated = userProfileService.update(userId, commandUserId, properties, commandType);
+        boolean isUserIdValid = userProfileCommand.isUserIdValid(userId);
+
+        if (!isUserIdValid) {
+            return Response.status(Response.Status.BAD_REQUEST)
+                    .entity("The userId must be the same as the path parameter")
+                    .build();
+        }
+
+        UserProfile userProfileUpdated = userProfileService.update(userId, properties, commandType);
 
         return Response.ok(userProfileUpdated).build();
     }
