@@ -1,0 +1,8 @@
+{
+  "userId": "existing-user-id",
+  "type": "increment",
+  "properties": {
+    "battleFought": 10,
+    "questsNotCompleted": -1
+  }
+}
